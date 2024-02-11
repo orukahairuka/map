@@ -8,9 +8,18 @@
 import SwiftUI
 import MapKit
 
+//マップの種類を示す列挙型
+enum MapType {
+    case standard//標準
+    case satellite//衛生写真
+    case hybrid//衛生写真・交通機関ラベル
+}
+
 struct MapView: UIViewRepresentable {
     //検索キーワード
     let searchKey: String
+    //マップ種類
+    let mapType: MapType
     //表示するViewを作成する時に実行
     func makeUIView(context: Context) -> MKMapView {
         MKMapView()
@@ -19,6 +28,18 @@ struct MapView: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         //入力された文字をでデバッグエリアに表示
         print("検索キーワード\(searchKey)")
+
+        //マップの種類設定
+        switch mapType {
+        case .standard:
+            uiView.preferredConfiguration = MKStandardMapConfiguration(elevationStyle: .flat)
+
+        case .satellite:
+            uiView.preferredConfiguration = MKImageryMapConfiguration()
+
+        case.hybrid:
+            uiView.preferredConfiguration = MKHybridMapConfiguration()
+        }
         //インスタンス生成
         let geocoder = CLGeocoder()
         //入力された文字から位置情報を取得
@@ -56,7 +77,7 @@ struct MapView: UIViewRepresentable {
 }
 
 #Preview {
-    MapView(searchKey: "羽田空港")
+    MapView(searchKey: "羽田空港", mapType: .standard)
         }
 
 
